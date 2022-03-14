@@ -1,9 +1,10 @@
 import { Client, Intents } from 'discord.js'
+import config from './config/config'
 
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS]
 })
 
-client.login('OTE3NjMwODAzMzE0MzUyMjA4.Ya7gSA.NR_4Qv0Qwzb285roZBqFIMd93wg')
+client.login(config.WONDER_DISCORD_BOT_TOKEN)
 
 export default client

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: discord-notification-service
+spec:
+  selector:
+    app: discord-notification-service
+  ports:
+  - port: 5001
+    targetPort: 5001

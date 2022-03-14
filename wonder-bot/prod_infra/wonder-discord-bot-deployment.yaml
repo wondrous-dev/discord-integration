@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wonder-discord-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wonder-discord-bot
+  template:
+    metadata:
+      labels:
+        app: wonder-discord-bot
+    spec:
+      containers:
+      - name: wonder-discord-bot
+        image: gcr.io/wondrous-1587456307075/wonder-discord-bot:VERSION
+        env:
+          - name: CORE_API_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: core-api-secret
+                key: CORE_API_SECRET
+          - name: WONDER_DISCORD_BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: wonder-discord-bot-token
+                key: WONDER_DISCORD_BOT_TOKEN

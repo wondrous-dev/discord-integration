@@ -1,6 +1,7 @@
 import { Client, Intents, Permissions, User } from 'discord.js'
 import { coreService } from './remote/wondrousCore'
 import { AxiosError } from 'axios'
+import config from './config/config'
 
 const WONDER_BOT_ID = '917630803314352208'
 
@@ -43,6 +44,10 @@ client.on('messageCreate', async (msg) => {
 			let replied = false
 			const error = e as AxiosError
 			const errorData = error?.response?.data
+			if (!errorData) {
+				msg.reply('Our server is experiencing issues please contact suport!')
+				return
+			}
 			if ('validation_error' in errorData) {
 				msg.reply('invalid input field missing!')
 				replied = true
@@ -61,13 +66,12 @@ client.on('messageCreate', async (msg) => {
 					replied = true
 				}
 			}
-			console.error(errorData)
 			if (!replied) {
 				msg.reply('unknown error ecountered!')
 			}
 			return
 		}
-		msg.reply('notification configured!')
+		msg.reply('notification configured to this current channel!')
 		return
 	}
 	msg.reply("invalid command do you mean 'setup notification'")
@@ -78,6 +82,6 @@ client.on('guildCreate', (guild) => {
 	console.log(roles)
 })
 
-client.login('OTE3NjMwODAzMzE0MzUyMjA4.Ya7gSA.NR_4Qv0Qwzb285roZBqFIMd93wg')
+client.login(config.WONDER_DISCORD_BOT_TOKEN)
 
 export default client
