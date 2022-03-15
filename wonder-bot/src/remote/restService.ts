@@ -22,8 +22,8 @@ class HttpService {
 		const response = await axios({
 			method,
 			headers: {
-				Authorization: config.wondrousCoreApiSecret
-					? config.wondrousCoreApiSecret
+				Authorization: config.WONDROUS_CORE_API_SECRET
+					? config.WONDROUS_CORE_API_SECRET
 					: ''
 			},
 			url: `${this.baseUrl}${endpoint}`,
