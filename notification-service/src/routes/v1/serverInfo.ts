@@ -50,4 +50,26 @@ router.get('/guild', function (req, res) {
 	})
 })
 
+router.get('/guild/channels', async function (req, res) {
+	const guildId = req.body?.guildId
+	const guild = client?.guilds.cache.get(guildId)
+	guild?.channels
+	if (!guild) {
+		res.status(400).json({ error: 'guild is not found' })
+		return
+	}
+	const textChannelArray: any = []
+	const channels = await guild.channels.fetch()
+	for (const channel of channels.values()) {
+		if (channel.isText()) {
+			textChannelArray.push({ name: channel.name, id: channel.id })
+		}
+		// channelArray.push({ id: channel.id })
+	}
+	// console.log(guild.channels)
+	res.json({
+		channels: textChannelArray
+	})
+})
+
 export default router
