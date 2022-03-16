@@ -31,8 +31,12 @@ router.post('/push', function (req, res) {
 	const embed = formatDiscordChannelMessage(title, description, url)
 	const textChannel = channel as TextChannel
 	logger.info(`message ${message}`)
-	console.log(embed)
-	textChannel.send({ content: message, embeds: [embed] })
+	try {
+		textChannel.send({ content: message, embeds: [embed] })
+	} catch (e) {
+		logger.error('error pushing to discord')
+		console.error(e)
+	}
 	res.send('ok')
 })
 
