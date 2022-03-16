@@ -30,7 +30,8 @@ router.post('/push', function (req, res) {
 	const url = req.body?.url
 	const embed = formatDiscordChannelMessage(title, description, url)
 	const textChannel = channel as TextChannel
-	logger.info('message', message)
+	logger.info(`message ${message}`)
+	console.log(embed)
 	textChannel.send({ content: message, embeds: [embed] })
 	res.send('ok')
 })
