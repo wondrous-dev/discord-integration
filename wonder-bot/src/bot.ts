@@ -1,7 +1,8 @@
-import { Client, Intents, Permissions, User } from 'discord.js'
+import { Client, Intents, Permissions, User, Message } from 'discord.js'
 import { coreService } from './remote/wondrousCore'
 import { AxiosError } from 'axios'
 import config from './config/config'
+import * as Sentry from '@sentry/node'
 
 const WONDER_BOT_ID = '917630803314352208'
 
@@ -20,13 +21,14 @@ client.on('messageCreate', async (msg) => {
 	if (commandArrayFiltered.length < 3) {
 		return
 	}
+	console.log(msg.content)
 	if (
 		commandArrayFiltered[1] === 'setup' &&
 		commandArrayFiltered[2] === 'notification'
 	) {
 		if (commandArrayFiltered.length === 3) {
-			msg.reply(
-				'please specify org username using !wonder setup notification {{org username}}'
+			replyMsg(
+				msg, 'please specify org username using !wonder setup notification {{org username}}'
 			)
 			return
 		}
@@ -45,37 +47,61 @@ client.on('messageCreate', async (msg) => {
 			const error = e as AxiosError
 			const errorData = error?.response?.data
 			if (!errorData) {
-				msg.reply('Our server is experiencing issues please contact suport!')
+				replyMsg(
+					msg,
+					'Our server is experiencing issues please contact suport!'
+				)
 				return
 			}
 			if ('validation_error' in errorData) {
-				msg.reply('invalid input field missing!')
+				replyMsg(msg, 'invalid input field missing!')
 				replied = true
 			}
 			if ('error_code' in errorData) {
 				if (errorData.error_code === 'no_org_found') {
-					msg.reply('invalid org username!')
+					replyMsg(msg, 'invalid org username!')
 					replied = true
 				}
 				if (errorData.error_code === 'no_user_found') {
-					msg.reply('no user associated with discord id make sure you linked your discord account to wonder!')
+					replyMsg(
+						msg,
+						'no user associated with discord id make sure you linked your discord account to wonder!'
+					)
 					replied = true
 				}
 				if (errorData.error_code === 'user_does_not_have_access') {
-					msg.reply('user does not have access make sure you have the correct permission on wonder!')
+					replyMsg(
+						msg,
+						'user does not have access make sure you have the correct permission on wonder!'
+					)
 					replied = true
 				}
 			}
 			if (!replied) {
-				msg.reply('unknown error ecountered!')
+				replyMsg(msg, 'unknown error ecountered!')
 			}
 			return
 		}
-		msg.reply('notification configured to this current channel!')
+		replyMsg(msg, 'notification configured to this current channel!')
 		return
 	}
-	msg.reply("invalid command do you mean 'setup notification'")
+	replyMsg(msg, "invalid command do you mean 'setup notification'")
 })
+
+async function replyMsg(msg: Message, content: string) {
+	try {
+		await msg.reply(content)
+	} catch (e) {
+		Sentry.captureException(e)
+		console.error('could not reply message try sending')
+		try {
+			await msg.channel.send(content)
+		} catch (e) {
+			Sentry.captureException(e)
+			console.error('could not send message')
+		}
+	}
+}
 
 client.on('guildCreate', (guild) => {
 	const roles = guild.roles.cache

@@ -1,4 +1,11 @@
 import client from './bot'
+import * as Sentry from '@sentry/node'
+import config from './config/config'
+
+Sentry.init({
+	dsn: config.SENTRY_DSN,
+	tracesSampleRate: 1.0
+})
 
 client.on('ready', () => {
 	console.log('Wonder bot ready!')
