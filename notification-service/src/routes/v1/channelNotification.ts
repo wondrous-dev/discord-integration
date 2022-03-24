@@ -41,12 +41,13 @@ router.post('/push', function (req, res) {
 })
 
 
-function formatDiscordChannelMessage (title, description, url) {
-	const message = new MessageEmbed()
-		.setTitle(title)
-		.setURL(url)
+function formatDiscordChannelMessage(title, description, url) {
+	const message = new MessageEmbed().setTitle(title)
 	if (description) {
 		message.setDescription(description)
+	}
+	if (url) {
+		message.setURL(url)
 	}
 	return message
 }
