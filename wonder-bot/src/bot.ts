@@ -1,6 +1,7 @@
 import { Client, Intents, Permissions, User, Message } from 'discord.js'
 import { coreService } from './remote/wondrousCore'
 import { AxiosError } from 'axios'
+import { registerCommands, unregisterCommands } from './commandMaker'
 import config from './config/config'
 import * as Sentry from '@sentry/node'
 
@@ -28,7 +29,8 @@ client.on('messageCreate', async (msg) => {
 	) {
 		if (commandArrayFiltered.length === 3) {
 			replyMsg(
-				msg, 'please specify org username using !wonder setup notification {{org username}}'
+				msg,
+				'please specify org username using !wonder setup notification {{org username}}'
 			)
 			return
 		}
@@ -103,10 +105,22 @@ async function replyMsg(msg: Message, content: string) {
 	}
 }
 
-client.on('guildCreate', (guild) => {
-	const roles = guild.roles.cache
-	console.log(roles)
-})
+// client.on('interactionCreate', async interaction => {
+// 	console.log('interactionCreate', interaction)
+
+// 	if (!interaction.isCommand()) return
+// 	console.log('interaction found')
+// 	const { commandName } = interaction
+// 	if (commandName !== 'wonder-notification-setup') return
+// 	const user: User = interaction.user
+// 	await interaction.reply('Pong!')
+// })
+
+// client.on('guildCreate', async (guild) => {
+// })
+
+// client.on('guildIntegrationsUpdate', (guild) => {
+// })
 
 client.login(config.WONDER_DISCORD_BOT_TOKEN)
 
