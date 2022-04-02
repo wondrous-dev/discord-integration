@@ -9,5 +9,8 @@ export const formatDiscordChannelMessage = (
 	if (description) {
 		message.setDescription(description)
 	}
+	if (url) {
+		message.setURL(url)
+	}
 	return message
 }
