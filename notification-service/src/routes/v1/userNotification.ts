@@ -8,7 +8,7 @@ import { formatDiscordChannelMessage } from '../../utils/format'
 const router = express.Router()
 
 router.post('/push', async function (req, res) {
-	const userId = req.body?.user_id
+	const userId = req.body?.discord_user_id
 	logger.info(`user direction message ${userId}`)
 	let user
 
