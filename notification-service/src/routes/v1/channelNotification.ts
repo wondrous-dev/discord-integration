@@ -42,15 +42,4 @@ router.post('/push', function (req, res) {
 	res.send('ok')
 })
 
-function formatDiscordChannelMessage(title, description, url) {
-	const message = new MessageEmbed().setTitle(title)
-	if (description) {
-		message.setDescription(description)
-	}
-	if (url) {
-		message.setURL(url)
-	}
-	return message
-}
-
 export default router

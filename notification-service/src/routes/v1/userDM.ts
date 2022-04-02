@@ -6,7 +6,7 @@ import logger from '../../config/logger'
 const router = express.Router()
 
 router.post('/send', async function (req, res) {
-	const userDiscordId = req.body?.user_discord_id
+	const userDiscordId = req.body?.discord_user_id
 	let discordUser = client.users.cache.get(userDiscordId)
 	if (!discordUser) {
 		try {
