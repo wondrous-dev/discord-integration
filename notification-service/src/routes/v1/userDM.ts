@@ -2,11 +2,12 @@ import express from 'express'
 import client from '../../discordClient'
 import { TextChannel, MessageEmbed } from 'discord.js'
 import logger from '../../config/logger'
+import { formatDiscordChannelMessage } from '../../utils/format'
 
 const router = express.Router()
 
 router.post('/send', async function (req, res) {
-	const userDiscordId = req.body?.user_discord_id
+	const userDiscordId = req.body?.discord_user_id
 	let discordUser = client.users.cache.get(userDiscordId)
 	if (!discordUser) {
 		try {
@@ -35,16 +36,5 @@ router.post('/send', async function (req, res) {
 
 	res.send('ok')
 })
-
-function formatDiscordChannelMessage(title, description, url) {
-	const message = new MessageEmbed().setTitle(title)
-	if (description) {
-		message.setDescription(description)
-	}
-	if (url) {
-		message.setURL(url)
-	}
-	return message
-}
 
 export default router
