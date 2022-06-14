@@ -28,7 +28,10 @@ router.post('/send', async function (req, res) {
 	const url = req.body?.url
 	const embed = formatDiscordChannelMessage(title, description, url)
 	try {
-		discordUser?.send({ content: message, embeds: [embed] })
+		discordUser?.send({ content: message, embeds: [embed] }).catch((err) => {
+			logger.error('error pushing to discord')
+			console.error(err)
+		})
 	} catch (e) {
 		logger.error('error pushing to discord')
 		console.error(e)
