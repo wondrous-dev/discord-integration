@@ -174,7 +174,7 @@ router.get('/invite-code/guild', async function (req, res) {
 		res.status(400).json({ error: 'could not fetch guild from invite code' })
 		return
 	}
-	console.log(result)
+	console.log(result.data)
 	const guild = result.data?.guild
 	res.json({
 		guildId: guild?.id,
