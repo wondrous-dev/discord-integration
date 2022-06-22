@@ -184,7 +184,7 @@ router.get('/invite-code/guild', async function (req, res) {
 
 router.get('/guild/bot-added', async function (req, res) {
 	const guildId = req.body?.guildId
-	const guild = client.guilds.cache.get(guildId)
+	const guild = await client.guilds.fetch(guildId)
 	let botAdded = false
 	if (guild) {
 		botAdded = true
