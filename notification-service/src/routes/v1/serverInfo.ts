@@ -2,6 +2,8 @@ import express from 'express'
 import client from '../../discordClient'
 import { TextChannel, MessageEmbed } from 'discord.js'
 import { ChannelNotificationError } from '../../lib/error'
+import axios from 'axios'
+import logger from '../../config/logger'
 
 const router = express.Router()
 
@@ -162,5 +164,34 @@ router.get('/user/has_role', async function (req, res) {
 	})
 })
 
+router.get('/invite-code/guild', async function (req, res) {
+	const inviteCode = req.body?.inviteCode
+	let result
+	try {
+		result = await axios.get(`https://discord.com/api/invites/${inviteCode}`)
+	} catch (e) {
+		logger.error(`could not fetch guild from invite code ${inviteCode}`)
+		res.status(400).json({ error: 'could not fetch guild from invite code' })
+		return
+	}
+	console.log(result)
+	const guild = result.data?.guild
+	res.json({
+		guildId: guild?.id,
+		guildName: guild?.name
+	})
+})
+
+router.get('/guild/bot-added', async function (req, res) {
+	const guildId = req.body?.guildId
+	const guild = client.guilds.cache.get(guildId)
+	let botAdded = false
+	if (guild) {
+		botAdded = true
+	}
+	res.json({
+		botAdded
+	})
+})
 
 export default router

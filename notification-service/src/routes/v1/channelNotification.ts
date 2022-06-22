@@ -3,6 +3,7 @@ import client from '../../discordClient'
 import { TextChannel, MessageEmbed } from 'discord.js'
 import { ChannelNotificationError } from '../../lib/error'
 import logger from '../../config/logger'
+import { formatDiscordChannelMessage } from '../../utils/format'
 
 const router = express.Router()
 
@@ -13,7 +14,8 @@ router.post('/push', function (req, res) {
 	const channel = client?.channels.cache.get(channelId)
 	if (!channel) {
 		const guild = client?.guilds.cache.get(guildId)
-		if (!guild) { // this stuff is actually probably not needed
+		if (!guild) {
+			// this stuff is actually probably not needed
 			// throw new ChannelNotificationError('wonder bot no longer connected to guild')
 			logger.error(`wonder bot no longer connected to guild ${guildId}`)
 			res.status(400).json({ error: 'wonder bot no longer connected to guild' })
@@ -39,16 +41,5 @@ router.post('/push', function (req, res) {
 	}
 	res.send('ok')
 })
-
-
-function formatDiscordChannelMessage (title, description, url) {
-	const message = new MessageEmbed()
-		.setTitle(title)
-		.setURL(url)
-	if (description) {
-		message.setDescription(description)
-	}
-	return message
-}
 
 export default router

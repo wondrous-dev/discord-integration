@@ -8,6 +8,8 @@ Sentry.init({
 })
 
 client.on('ready', () => {
+	// const guilds = client.guilds.cache.map((guild) => guild.id) // for discord v11 //let guilds = client.guilds.map(guild => guild.id)
+	// console.log(guilds)
 	console.log('Wonder bot ready!')
 })
 
