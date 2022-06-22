@@ -53,7 +53,6 @@ router.get('/guild', function (req, res) {
 router.get('/guild/channels', async function (req, res) {
 	const guildId = req.body?.guildId
 	const guild = client?.guilds.cache.get(guildId)
-	guild?.channels
 	if (!guild) {
 		res.status(400).json({ error: 'guild is not found' })
 		return
@@ -71,5 +70,97 @@ router.get('/guild/channels', async function (req, res) {
 		channels: textChannelArray
 	})
 })
+
+interface RoleInfo {
+	id: string
+	name: string
+	color: string
+	permissions: any
+	managed: boolean
+}
+
+router.get('/guild/roles', async function (req, res) {
+	const guildId = req.body?.guild_id
+	const guild = client?.guilds.cache.get(guildId)
+	if (!guild) {
+		res.status(400).json({ error: 'guild is not found' })
+		return
+	}
+	const roles = await guild?.roles.fetch()
+	if (!roles || roles.size === 0) {
+		return res.json({
+			roles: []
+		})
+	}
+	const rolesData: RoleInfo[] = []
+	roles.forEach((role) => {
+		const roleInfo = {
+			id: role?.id,
+			name: role?.name,
+			color: role?.hexColor,
+			permissions: role?.permissions,
+			managed: role?.managed
+		}
+		rolesData.push(roleInfo)
+	})
+	return res.json({
+		roles: rolesData
+	})
+})
+
+router.get('/guild/role', async function (req, res) {
+	const guildId = req.body?.guild_id
+	const roleId = req.body?.role_id
+	const guild = await client?.guilds.cache.get(guildId)
+	if (!guild) {
+		res.status(400).json({ error: 'guild is not found' })
+		return
+	}
+	const role = await guild?.roles?.fetch(roleId, { force: true })
+	if (!role) {
+		res.status(400).json({ error: 'role is not found' })
+		return
+	}
+	const roleInfo = {
+		id: role?.id,
+		name: role?.name,
+		color: role?.hexColor,
+		permissions: role?.permissions,
+		managed: role?.managed
+	}
+	// console.log(member)
+	return res.json(roleInfo)
+})
+
+router.get('/user/has_role', async function (req, res) {
+	// https://stackoverflow.com/questions/63205810/get-a-list-of-members-with-a-role-discord-js
+	// https://stackoverflow.com/questions/64670762/role-member-count-discord-js
+	const userId = req.body?.user_id
+	const guildId = req.body?.guild_id
+	const roleId = req.body?.role_id
+	const guild = await client?.guilds.cache.get(guildId)
+	// const guild = await client?.guilds.fetch(guildId)
+	if (!guild) {
+		res.status(400).json({ error: 'guild is not found' })
+		return
+	}
+	const role = await guild?.roles?.fetch(roleId, { force: true })
+	if (!role) {
+		res.status(400).json({ error: 'role is not found' })
+		return
+	}
+	const members = role?.members
+	const memberWithRole = members.find((m) => m.id === userId)
+	if (memberWithRole) {
+		return res.json({
+			exist: true
+		})
+	}
+	// console.log(member)
+	return res.json({
+		exist: false
+	})
+})
+
 
 export default router
